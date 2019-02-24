@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 //Clase para realizar cualquier tarea que tenga una variable cualquiera de entrada y de salida, ya sea un sensor o un actuador
-template<typename T, typename P>  //Se usa template ya que T Y P pueden ser de cualquier tipo (uint,long,etc)
+template<typename T, typename P>  //Se usa template ya que T Y P pueden ser de cualquier tipo (uint,long, bool, etc)
 class Task {
 
 private:
