@@ -1,3 +1,7 @@
+#ifndef PERIPHEAL_H
+#define PERIPHEAL_H
+
+
 #include <Arduino.h>
 
 
@@ -36,11 +40,14 @@ uint16_t Peripheal::getId() {
 String Peripheal::setName(String name) {
      //al atributo "name" se le asigna el string name entregado por la entrada de la funcion
     this->name = name;
-    return this->name = name;    //Se agrega esta salida para evitar el error de (no void)
+    return name;
 }
 
 uint16_t Peripheal::setId(uint16_t id) {
     //al atributo "name" se le asigna el string name entregado por la entrada de la funcion
     this->id = id;
-    return this->id = id;   //Se agrega esta salida para evitar el error de (no void)
+    return id;
 }
+
+
+#endif

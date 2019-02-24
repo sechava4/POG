@@ -1,11 +1,57 @@
-#include <Arduino.h>
+#ifndef TRIGGER_H
+    #define TRIGGER_H
+
+        #include <Arduino.h>
 
 
-//Se crea la clase periferico para utilizar cualquier sensor o actuador
-class Trigger {
-    private:            //Estos son los atributos que posee un objeto de esta clase
-        
-        
-    public:             //Estas son las funciones perimitidas que puede realizar el objeto
-        
-}
+        class Trigger {
+
+        private:
+            // T (*fun)(P);
+
+            //
+            int comparison;
+            int value;
+
+
+        public:
+
+
+            Trigger();
+            Trigger(int comparison_code, int value );
+            
+            
+            
+            void Listen( int var){     
+                switch (comparison)
+                {
+                    case 0:
+                        if(var==value){
+                            
+                        }
+                        
+                        break;
+                    case 1:
+                        ///=
+                        break;
+                    case 2:
+                        //<
+                        break;
+                    case 3:
+                        //>
+                        break;
+                }
+            
+                
+                //return this->target(var); 
+            }
+
+        };
+
+        Trigger::Trigger(int comparison_code, int value ) {
+                this->value = value; 
+                this->comparison = comparison_code;  
+            }
+
+
+#endif
