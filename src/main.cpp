@@ -2,6 +2,7 @@
 #include <sensor.h>
 #include <actuator.h>
 #include <peripheal.h>
+#include <trigger.h>
 #include "functions.h"
 
 //Name, id random y units
@@ -9,6 +10,8 @@ Sensor sensor = Sensor(String("lm35"), String("°C"));
 
 //Se crea una instancia de la clase actuador para crear un objeto llamado "servo"  con atributos name y type
 Actuator servo = Actuator(String("AX500"), String("Speed Controller"));
+
+
 
 
 
@@ -24,11 +27,12 @@ void setup() {
 }
 
 void loop() {
+  while(1){
+
   //ya que sensor hereda de Task, se utiliza la funcion run de este para añadir la tarea a realizar
   //En este caso el (0) no hace nada ya readTemp no necesita parametros de entrada
-  Serial.println(sensor.run(0));   
-  while(1){
-  Serial.println(sensor.run(0));   
+  Serial.println(sensor.run(0)); 
+
   delay(1000);
   servo.report(Serial);
   }
