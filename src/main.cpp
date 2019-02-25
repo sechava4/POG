@@ -6,13 +6,15 @@
 #include "functions.h"
 
 //Name, id random y units
-Sensor sensor = Sensor(String("lm35"), String("°C"));
+Sensor sensor_temp = Sensor(String("lm35"), String("°C"));
+
+Sensor sensor_bool = Sensor(String("presencia"), String(""));
 
 //Se crea una instancia de la clase actuador para crear un objeto llamado "servo"  con atributos name y type
 Actuator servo = Actuator(String("AX500"), String("Speed Controller"));
 
 //Se crea una instancia de la clase Trigger para crear un objeto llamado "Trigger1"  con atributos comparison y value (==0 ?)
-Trigger trigger = Trigger((0), (0));
+Trigger trigger = Trigger("=", (0));
 
 
 
@@ -22,7 +24,9 @@ void setup() {
 
   //ya que sensor hereda de Task, se utiliza la funcion attach de este para añadir la funcion
   //en este caso quedaria: sensor.attach(float (analogread()) 
-  sensor.attach(readTemp);  
+  sensor_temp.attach(readTemp);  
+
+  sensor_bool.attach(digitalPinRead);
 
   //añadiendo la funcion a servo
   servo.attach(setSpeed);
@@ -37,7 +41,7 @@ void loop() {
   //En este caso el (0) no hace nada ya readTemp no necesita parametros de entrada
   while(1){
   
-    trigger.Listen(sensor.run(0));
+    trigger.Listen(sensor_bool.run(0));
 
     //Serial.println(sensor.run(0)); 
   

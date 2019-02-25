@@ -3,55 +3,61 @@
 
         #include <Arduino.h>
 
-
+        //template<typename T> 
         class Trigger {
 
         private:
             // T (*fun)(P);
 
-            //
-            int comparison;
+            const char* comparison;
             int value;
-
+            
 
         public:
 
-
             Trigger();
-            Trigger(int comparison_code, int value );
+            Trigger(const char* comparison_code,int some_var );
             
             
-            
-            void Listen( int var){     
-                switch (comparison)
-                {
-                    case 0:
-                        if(var==value){
-                            
+            int Listen( int var){ 
+                //Si el valor medido es igual al valor de disparo    
+                if (strcmp(comparison, "=") == 0) 
+                    {
+                        if (var==value){
+                            return 1;
                         }
-                        
-                        break;
-                    case 1:
-                        ///=
-                        break;
-                    case 2:
-                        //<
-                        break;
-                    case 3:
-                        //>
-                        break;
+                        else {return 0;}
+                    } 
+                //Si el valor medido es menor al valor de disparo
+                else if (strcmp(comparison, "<") == 0) 
+                    {
+                        if (var<value){
+                            return 1;
+                        }
+                        else {return 0;}
+                    }    
+                //Si el valor medido es mayor al valor de disparo
+                else if (strcmp(comparison, ">") == 0) 
+                    {
+                        if (var>value){
+                            return 1;
+                        }
+                        else {return 0;}
+                    }   
+                else {
+                    return 0;
                 }
-            
-                
-                //return this->target(var); 
+
             }
 
         };
 
-        Trigger::Trigger(int comparison_code, int value ) {
-                this->value = value; 
+
+        //template<typename T> 
+        Trigger::Trigger(const char* comparison_code,int some_val ) {
+                this->value = some_val; 
                 this->comparison = comparison_code;  
             }
 
-
+        
 #endif
