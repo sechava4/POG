@@ -3,20 +3,20 @@
 
         #include <Arduino.h>
 
-        //template<typename T> 
+        template<typename T> 
         class Trigger {
 
         private:
             // T (*fun)(P);
 
             const char* comparison;
-            int value;
+            T value;
             
 
         public:
 
             Trigger();
-            Trigger(const char* comparison_code,int some_var );
+            Trigger(const char* comparison_code,T some_var );
             
             
             int Listen( int var){ 
@@ -53,8 +53,8 @@
         };
 
 
-        //template<typename T> 
-        Trigger::Trigger(const char* comparison_code,int some_val ) {
+        template<typename T> 
+        Trigger<T>::Trigger(const char* comparison_code,T some_val ) {
                 this->value = some_val; 
                 this->comparison = comparison_code;  
             }

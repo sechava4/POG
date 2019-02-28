@@ -14,7 +14,7 @@ Sensor sensor_bool = Sensor(String("presencia"), String(""));
 Actuator servo = Actuator(String("AX500"), String("Speed Controller"));
 
 //Se crea una instancia de la clase Trigger para crear un objeto llamado "Trigger1"  con atributos comparison y value (==0 ?)
-Trigger trigger = Trigger("=", (0));
+Trigger<int> trigger = Trigger<int>("=", int(0));
 
 
 
@@ -40,13 +40,13 @@ void loop() {
   //ya que sensor hereda de Task, se utiliza la funcion run de este para añadir la tarea a realizar
   //En este caso el (0) no hace nada ya readTemp no necesita parametros de entrada
   while(1){
+    
+    //Si la medida del sensor == 0 entonces servo.run(50);
+    if (trigger.Listen(sensor_bool.run(0))){
+      servo.run(50);
+      servo.report(Serial);
+    }
   
-    trigger.Listen(sensor_bool.run(0));
-
-    //Serial.println(sensor.run(0)); 
-  
-    delay(1000);
-    //servo.report(Serial);
   }
 }
 
