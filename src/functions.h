@@ -17,6 +17,12 @@
     sprintf(buff, "PWM set to %2d",duty);       //  %2d se usa para signed decimal integer, se agrega duty
     Serial.println(buff);   
     return 0;
-}
+    }
+
+    bool digitalPinRead(int pin)
+    {
+        return(digitalRead(pin));
+    }
+
 
 #endif
