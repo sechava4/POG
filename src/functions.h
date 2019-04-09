@@ -24,5 +24,12 @@
         return(digitalRead(pin));
     }
 
+    bool trig(uint16_t pin)
+    {
+        digitalWrite(pin,1);
+        return(1);
+
+    }
+
 
 #endif
