@@ -30,14 +30,13 @@ String Actuator::getType(){
 };
 
 //Acá esta el código de la funcion report
-// void Actuator::report(Stream &uart){
-//     StaticJsonBuffer<200> jsonBuffer;               //La cantidad de caracteres que va a tener el mensaje Json
-//     JsonObject& res = jsonBuffer.createObject();    //Se crea el onjeto json llamado res
-//     res["name"] = this->getName();                  //Se añade name y el valor a la cadena del mensaje JSON
-//     res["id"] = this->getId();                      //Se añade id y el valor a la cadena del mensaje JSON
-//     res["type"] = "Actuator";                       //Se añade actuador y el valor a la cadena del mensaje JSON
-//     res["act_type"] = this->getType();              //Se añade type y el valor a la cadena del mensaje JSON
-//     String out;                                     //Se declara una variable string
-//     res.prettyPrintTo(out);                         //Se crea un string con todo el mensaje Json (res)
-//     uart.println(out);                              //uart va a tomar el valor de Serial o Serial 1, etc...
-// }
+ void Actuator::report(Stream &uart)
+ {
+     StaticJsonDocument<256> doc;              //La cantidad de caracteres que va a tener el mensaje Json
+     doc["hello"] = "world";     
+     doc["name"] = this->getName();                  //Se añade name y el valor a la cadena del mensaje JSON
+     doc["id"] = this->getId();                      //Se añade id y el valor a la cadena del mensaje JSON
+     doc["type"] = "Actuator";                       //Se añade actuador y el valor a la cadena del mensaje JSON
+     doc["act_type"] = this->getType();              //Se añade type y el valor a la cadena del mensaje JSON
+     serializeJson(doc, uart);
+ }
