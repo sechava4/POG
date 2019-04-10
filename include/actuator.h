@@ -32,8 +32,7 @@ String Actuator::getType(){
 //Acá esta el código de la funcion report
  void Actuator::report(Stream &uart)
  {
-     StaticJsonDocument<256> doc;              //La cantidad de caracteres que va a tener el mensaje Json
-     doc["hello"] = "world";     
+     StaticJsonDocument<256> doc;              //La cantidad de caracteres que va a tener el mensaje Json     
      doc["name"] = this->getName();                  //Se añade name y el valor a la cadena del mensaje JSON
      doc["id"] = this->getId();                      //Se añade id y el valor a la cadena del mensaje JSON
      doc["type"] = "Actuator";                       //Se añade actuador y el valor a la cadena del mensaje JSON

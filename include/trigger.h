@@ -2,6 +2,7 @@
     #define TRIGGER_H
 
         #include <Arduino.h>
+        #include <functions.h>
 
         template<typename T> 
         class Trigger {
@@ -12,38 +13,11 @@
         public:
 
             Trigger();
-            Trigger(char comparison_code,T some_var );
+            Trigger(char comparison_code,T some_var );   //Funcion constructora
             
-            
-            int Listen( int var){ 
-             
-                //Si el valor medido es igual al valor de disparo    
-                if (comparison == '=') 
-                    {
-                        if (var==value){
-                            return 1;
-                        }
-                        else {return 0;}
-                    } 
-                //Si el valor medido es menor al valor de disparo
-                else if (comparison == '<') 
-                    {
-                        if (var<value){
-                            return 1;
-                        }
-                        else {return 0;}
-                    }    
-                //Si el valor medido es mayor al valor de disparo
-                else if (comparison == '>') 
-                    {
-                        if (var>value){
-                            return 1;
-                        }
-                        else {return 0;}
-                    }   
-                else {
-                    return 0;
-                }
+            template<typename P> 
+            bool Listen( P var){ 
+                return(funtrig(comparison,var,value));
 
             }
 
@@ -51,8 +25,8 @@
 
 
         template<typename T> 
-        Trigger<T>::Trigger(char comparison_code,T some_val ) {
-                this->value = some_val; 
+        Trigger<T>::Trigger(char comparison_code,T comp_val) {
+                this->value = comp_val; 
                 this->comparison = comparison_code;  
             }
 

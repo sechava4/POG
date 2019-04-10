@@ -24,12 +24,40 @@
         return(digitalRead(pin));
     }
 
-    bool trig(uint16_t pin)
+    bool trig0(uint16_t val)
     {
-        digitalWrite(pin,1);
-        return(1);
+        digitalWrite(16,val);
+        return(val);
 
     }
 
+    template<typename T,typename P> 
+    bool funtrig (char comparison, P var,T value){
+        if (comparison == '=') 
+            {
+                if (var==value){
+                    return 1;
+                }
+                else {return 0;}
+            } 
+        else if (comparison == '<') 
+            {
+                if (var<value){
+                    return 1;
+                }
+                else {return 0;}
+            }    
+        //Si el valor medido es mayor al valor de disparo
+        else if (comparison == '>') 
+            {
+                if (var>value){
+                    return 1;
+                }
+                else {return 0;}
+            }   
+        else {
+            return 0;
+        }
+    }
 
 #endif
