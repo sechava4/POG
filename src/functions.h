@@ -71,7 +71,6 @@
     if (digitalRead(DATA)) prevNextCode |= 0x02;
     if (digitalRead(CLK)) prevNextCode |= 0x01;
     prevNextCode &= 0x0f;
-
     return ( rot_enc_table[( prevNextCode & 0x0f )]);
 }
 
