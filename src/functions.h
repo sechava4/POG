@@ -24,7 +24,7 @@
         return(digitalRead(pin));
     }
 
-    bool trig0(uint16_t val)
+    bool dwrite(uint16_t val)
     {
         digitalWrite(16,val);
         return(val);
@@ -58,6 +58,11 @@
         else {
             return 0;
         }
-    }
+        }
+
+        uint32_t pulses;
+        void rotarydetect ()  {
+            pulses++;
+        }
 
 #endif

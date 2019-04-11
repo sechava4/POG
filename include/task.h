@@ -30,7 +30,7 @@ public:
 
 };
 
-//Funcion Constructora?
+//Funcion Constructora
 template<typename T, typename P>
 Task<T, P>::Task(){}
 
