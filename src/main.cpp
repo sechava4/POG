@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #include <sensor.h>
 #include <actuator.h>
 #include <peripheal.h>
@@ -54,12 +56,12 @@ void loop() {
 
   //if(trigger_valve.Listen(i1)){
   //  valvula.run(16);       //Se activa la valvula conectada al pin 16
-  dist_cm = double(wheel_radious*degrees_per_pulse*pulses);
-  Serial.println(dist_cm);
+  //dist_cm = double(wheel_radious*degrees_per_pulse*pulses);
+  Serial.println(pulses);
   //}
   //valvula.report(Serial);
   //Serial.println( );
-  delay(2);
+  
   
 
 }
