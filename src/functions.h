@@ -60,15 +60,22 @@
         }
         }
 
-        uint32_t pulses;
-        const double degrees_per_pulse = 0.31416;
-        const double wheel_radious = 3.1831;
-        double dist_cm;
-        void rotarydetect ()  {
-            pulses++;
-            delay(1);
+    #define CLK D2
+    #define DATA D3
+    static uint8_t prevNextCode = 0;
 
-        }
+    int8_t read_rotary() {
+    static int8_t rot_enc_table[] = {0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0};
+
+    prevNextCode <<= 2;
+    if (digitalRead(DATA)) prevNextCode |= 0x02;
+    if (digitalRead(CLK)) prevNextCode |= 0x01;
+    prevNextCode &= 0x0f;
+    return ( rot_enc_table[( prevNextCode & 0x0f )]);
+}
 
 
+
+
+  
 #endif

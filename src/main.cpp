@@ -1,16 +1,19 @@
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #include <sensor.h>
 #include <actuator.h>
 #include <peripheal.h>
 #include <trigger.h>
 #include "functions.h"
 
-float i1=0.6;
 
-uint8_t GPIO_Pin = D2;    //Interruptpin
-//Name, id random y units
+
+
+volatile uint8_t pulses = 0;
+
 
 //Creacion de instancias
 //Sensores
@@ -31,22 +34,25 @@ Trigger<int> trigger_valve = Trigger<int>('=', int(0));
 
 
 
+
+
+
 //hacer boton solicitar tarea
 
 void setup() {
-  Serial.begin(9600);     //Velocidad de la comunicacion serial
-
-  attachInterrupt (GPIO_Pin,rotarydetect,RISING);
   
-  //ya que sensor hereda de Task, se utiliza la funcion attach de este para añadir la funcion
-  //en este caso quedaria: sensor.attach(float (analogread()) 
+
+  Serial.begin(9600);     //Velocidad de la comunicacion serial
+  //detachInterrupt(digitalPinToInterrupt(InterruptPin));
+  pinMode(CLK, INPUT_PULLUP);
+  pinMode(DATA, INPUT_PULLUP);
   encoder_rueda.attach(readTemp);  
 
 
   //añadiendo la funcion a servo
   valvula.attach(dwrite);    //Se añade la función que dispara la válvula conectada al pin digital 0
   //Aca estoy seteando la velocidad a 50 e imprimiendo
-  
+ 
 }
 
 void loop() {
@@ -54,18 +60,17 @@ void loop() {
 
   //if(trigger_valve.Listen(i1)){
   //  valvula.run(16);       //Se activa la valvula conectada al pin 16
-  dist_cm = double(wheel_radious*degrees_per_pulse*pulses);
-  Serial.println(dist_cm);
-  //}
-  //valvula.report(Serial);
-  //Serial.println( );
-  delay(2);
   
 
+   if( read_rotary() ) {
+
+      Serial.println(pulses);
+   
+      if ( (prevNextCode&0x0f)==0x07) {
+        pulses++;
+      }
+  }
+
 }
-
-
-
-
 
 
