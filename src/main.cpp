@@ -54,10 +54,12 @@ void loop() {
 
   //if(trigger_valve.Listen(i1)){
   //  valvula.run(16);       //Se activa la valvula conectada al pin 16
-  Serial.println(pulses);
+  dist_cm = double(wheel_radious*degrees_per_pulse*pulses);
+  Serial.println(dist_cm);
   //}
   //valvula.report(Serial);
   //Serial.println( );
+  delay(2);
   
 
 }
