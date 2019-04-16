@@ -6,10 +6,8 @@
 
     #include <Arduino.h>
 
-    //Funcion 1 para sensor de temperatura
-    float readTemp(int var){
-    return (float(analogRead(0)/1023.0)*5.0);
-    }
+   
+
 
     //Funcion 2 para setear velocidad de servo, en este momento solo imprime la velocidad
     bool setSpeed(uint16_t duty){    //P = uint16_t T = bool
@@ -19,10 +17,14 @@
     return 0;
     }
 
-    bool digitalPinRead(int pin)
+    
+
+
+    float digitalPinRead(int pin)
     {
         return(digitalRead(pin));
     }
+
 
     bool dwrite(uint16_t val)
     {
@@ -58,10 +60,15 @@
         else {
             return 0;
         }
-        }
+    }
 
-    #define CLK D2
-    #define DATA D3
+
+
+
+    #define CLK D3
+    #define DATA D4
+
+    volatile uint8_t pulses = 0;
     static uint8_t prevNextCode = 0;
 
     int8_t read_rotary() {
@@ -72,7 +79,37 @@
     if (digitalRead(CLK)) prevNextCode |= 0x01;
     prevNextCode &= 0x0f;
     return ( rot_enc_table[( prevNextCode & 0x0f )]);
-}
+
+    
+
+    }
+
+    float count_pulses(int a) {
+        if( read_rotary() ) {
+        Serial.println(pulses);   
+            if ( (prevNextCode&0x0f)==0x07) {
+                pulses++;
+            }
+        }
+    return(pulses);
+    }
+
+
+    void zerofcn(){
+        pulses = 0;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
