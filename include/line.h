@@ -44,7 +44,7 @@ int Line::getCms(){
  void Line::report(Stream &uart)
  {
      StaticJsonDocument<256> doc;              //La cantidad de caracteres que va a tener el mensaje Json     
-     doc["type"] = "Actuator";                       //Se añade actuador y el valor a la cadena del mensaje JSON
+     doc["type"] = "Line";                       //Se añade actuador y el valor a la cadena del mensaje JSON
      doc["act_type"] = this->getColor();              //Se añade type y el valor a la cadena del mensaje JSON
      serializeJson(doc, uart);
  }

@@ -1,28 +1,40 @@
-//Este header se utiliza para guardar las funciones que va a utilizar posteriormente ol objeto Task
-
+//Este header se utiliza para guardar las funciones que va a utilizar posteriormente el objeto Task
 //Se define solo una vez para que no hayan errores de redefinición 
 #ifndef function_h
     #define function_h
 
     #include <Arduino.h>
+    #include <Encoder.h>
+    #include <Wire.h>
+    #include <hd44780.h>                       // main hd44780 header
+    #include <hd44780ioClass/hd44780_I2Cexp.h> // i2c expander i/o class header
 
-    //Funcion 1 para sensor de temperatura
-    float readTemp(int var){
-    return (float(analogRead(0)/1023.0)*5.0);
-    }
+    hd44780_I2Cexp lcd; // declare lcd object: auto locate & auto config expander chip
 
-    //Funcion 2 para setear velocidad de servo, en este momento solo imprime la velocidad
-    bool setSpeed(uint16_t duty){    //P = uint16_t T = bool
-    char buff[50];  
-    sprintf(buff, "PWM set to %2d",duty);       //  %2d se usa para signed decimal integer, se agrega duty
-    Serial.println(buff);   
-    return 0;
-    }
+    const int LCD_COLS = 16;
+    const int LCD_ROWS = 2;
 
-    bool digitalPinRead(int pin)
+
+    float digitalPinRead(int pin)
     {
         return(digitalRead(pin));
     }
+
+
+    Encoder myEnc(D3, D4);
+    long oldPosition  = -999;
+    int pulses;
+    float pulseReading(int )
+    {
+        long pulses = (myEnc.read())/4;   //Incrementos de a 1
+        if (pulses != oldPosition) 
+        {
+            oldPosition = pulses;
+            lcd.clear();  
+        }                         //Para que no queden valores montados en el lcd
+        return(pulses);
+    }
+
 
     bool dwrite(uint16_t val)
     {
@@ -58,21 +70,25 @@
         else {
             return 0;
         }
-        }
+    }
 
-    #define CLK D2
-    #define DATA D3
-    static uint8_t prevNextCode = 0;
 
-    int8_t read_rotary() {
-    static int8_t rot_enc_table[] = {0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0};
 
-    prevNextCode <<= 2;
-    if (digitalRead(DATA)) prevNextCode |= 0x02;
-    if (digitalRead(CLK)) prevNextCode |= 0x01;
-    prevNextCode &= 0x0f;
-    return ( rot_enc_table[( prevNextCode & 0x0f )]);
-}
+    void zerofcn(){
+        myEnc.write(0);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
