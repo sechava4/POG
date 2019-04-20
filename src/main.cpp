@@ -11,12 +11,12 @@
 #include <hd44780.h>                       // main hd44780 header
 #include <hd44780ioClass/hd44780_I2Cexp.h> // i2c expander i/o class header
 
-hd44780_I2Cexp lcd; // declare lcd object: auto locate & auto config expander chip
 
-const int LCD_COLS = 16;
-const int LCD_ROWS = 2;
+
+
 
 #define ROJO 0x00FF0000 
+uint8_t state = 0;
 
 //Creacion de instancias
 //Sensores
@@ -45,11 +45,9 @@ void setup() {
 
   Serial.begin(9600);     //Velocidad de la comunicacion serial
 
-  pinMode(CLK, INPUT_PULLUP);
-  pinMode(DATA, INPUT_PULLUP);
 
   attachInterrupt (D6,zerofcn,RISING);    //Interrupcion para zero
-  encoder_rueda.attach(count_pulses);  
+  encoder_rueda.attach(pulseReading);  
 
   request_button.attach(digitalPinRead);
   finish_button.attach(digitalPinRead);
@@ -57,24 +55,35 @@ void setup() {
   valvula.attach(dwrite);    //Se añade la función que dispara la válvula conectada al pin digital 0
 
   lcd.begin(LCD_COLS, LCD_ROWS);
+  lcd.clear();
 
-  lcd.print("Hello, World!");
 
 
 }
 
 void loop() {
+  
+  switch (state)
+  {
+    case 0:  //Antes de solicitar una tarea
+      lcd.setCursor(0,0);
+      lcd.print("Solicitar Linea");      
+      break;
+  
+  }
+  
+  //Lea el encoder
+  
+    
 
+  // Serial.println(pulses);
+  lcd.setCursor(0,1);
+  lcd.print(static_cast<int>(encoder_rueda.run(0)));   
 
-  lcd.setCursor(1,1);
-  lcd.print("tamo melo");
-
-  //if(trigger_valve.Listen(i1)){
+  // if(trigger_valve.Listen(i1)){
   //  valvula.run(16);       //Se activa la valvula conectada al pin 16
 
-  encoder_rueda.run(0);
-  //Serial.println(1);
-  // if (request_button.run(D4)){
+  // if (request_button.run(D5)){
   //   //
   //   //
   //   Line linea("Rojo",89);  //RGB 
@@ -85,7 +94,7 @@ void loop() {
     
   // }
   
-  // if (finish_button.run(D5)){
+  // if (finish_button.run(D6)){
   //   valvula.run(0);
   //   pulses = 0;
   //   //
