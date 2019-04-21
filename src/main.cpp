@@ -10,6 +10,7 @@
 #include <Wire.h>
 #include <hd44780.h>                       // main hd44780 header
 #include <hd44780ioClass/hd44780_I2Cexp.h> // i2c expander i/o class header
+#include <WiFiClient.h>
 
 
 
@@ -27,7 +28,6 @@ Sensor request_button = Sensor(String("Button in"), String("state"));
 Sensor finish_button = Sensor(String("Button out"), String("state"));
 
 //Declare object of class HTTPClient
-HTTPClient http;
 
 //Se crea una instancia de la clase actuador para crear un objeto llamado "electrovalvula"  con atributos name y type
 Actuator valvula = Actuator(String("0.8Mpa"), String("Electrovalvula"));
@@ -57,26 +57,72 @@ void setup() {
   lcd.begin(LCD_COLS, LCD_ROWS);
   lcd.clear();
 
-
-
+  WiFi.mode(WIFI_STA);
+  WiFi.begin("HOME-A9BC", "2024AA4E158B3787");    //WiFi connection
+ 
+  while (WiFi.status() != WL_CONNECTED) {  //Wait for the WiFI connection
+ 
+    delay(500);
+    lcd.setCursor(0,0);
+    lcd.print("Connecting");
+ 
+  }
+  lcd.setCursor(0,0);
+  lcd.print("WiFi Connected");
+  delay(1000);
 }
 
 void loop() {
   
+  //Finite state switch
   switch (state)
   {
     case 0:  //Antes de solicitar una tarea
       lcd.setCursor(0,0);
-      lcd.print("Solicitar Linea");      
+      lcd.print("Solicitar Linea");  
+      if (request_button.run(D5)){
+        state = 1;  
+      }
+
+      break;
+
+    case 1:  //Solicitando tarea
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Solicitando"); 
+      delay(200); 
+      if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status
+        Serial.println("conecto");
+        WiFiClient client;
+
+        HTTPClient http;
+
+        if (http.begin(client, "http://192.168.1.53:8080/helloesp")) { // HTTP
+          Serial.println("accedio a la pagina");
+          int httpCode = http.GET(); //Send the request
+    
+          if (httpCode > 0) { //Check the returning code
+            Serial.println("leyo el contenido");
+            String payload = http.getString();   //Get the request response payload
+            lcd.clear();
+            lcd.setCursor(0,0);
+            lcd.print(payload); 
+            delay(2000);
+          }
+          else {
+            Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+          }
+        }
+      http.end();   //Close connection
+      delay(2000);
+      }
+      state = 0;
       break;
   
   }
   
-  //Lea el encoder
+  // SIempre Lea el encoder
   
-    
-
-  // Serial.println(pulses);
   lcd.setCursor(0,1);
   lcd.print(static_cast<int>(encoder_rueda.run(0)));   
 
@@ -101,10 +147,7 @@ void loop() {
   //   //Mande datos s la nube
   // }
 
-  //if(millis() - timer > 1000){
-  //  timer = millis();
-
-  //}
+  
   
 
 }
