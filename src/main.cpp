@@ -27,6 +27,8 @@ Sensor request_button = Sensor(String("Button in"), String("state"));
 
 Sensor finish_button = Sensor(String("Button out"), String("state"));
 
+Line tarea = Line(0,0,"default"); //Se crea una instancia vacia para luego sobreescribirla
+
 //Declare object of class HTTPClient
 
 //Se crea una instancia de la clase actuador para crear un objeto llamado "electrovalvula"  con atributos name y type
@@ -44,7 +46,9 @@ void setup() {
   
 
   Serial.begin(9600);     //Velocidad de la comunicacion serial
-
+  pinMode(D8, OUTPUT);
+  pinMode(D6, INPUT);
+  pinMode(D5, INPUT);
 
   attachInterrupt (D6,zerofcn,RISING);    //Interrupcion para zero
   encoder_rueda.attach(pulseReading);  
@@ -86,12 +90,12 @@ void loop() {
 
       break;
 
-    case 1:  //Solicitando tarea
+    case 1:  //Solicitando tarea de la base de datos
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print("Solicitando"); 
       delay(200); 
-      if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status
+      if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status first
         Serial.println("conecto");
         WiFiClient client;
 
@@ -101,54 +105,85 @@ void loop() {
           Serial.println("accedio a la pagina");
           int httpCode = http.GET(); //Send the request
     
-          if (httpCode > 0) { //Check the returning code
+          if (httpCode > 0) { //Check the returning code if 200
             Serial.println("leyo el contenido");
             String payload = http.getString();   //Get the request response payload
-            lcd.clear();
-            lcd.setCursor(0,0);
-            lcd.print(payload); 
-            delay(2000);
+            DynamicJsonDocument doc(2000);
+            DeserializationError error = deserializeJson(doc, payload);
+            if (error)
+              Serial.println("error de deserializacion");
+            tarea.setValues(doc["id"],doc["medida"],doc["color"]); //Se setean los valores leidos de la base de datos
+            tarea.report(Serial);
+    
           }
           else {
             Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
           }
         }
-      http.end();   //Close connection
-      delay(2000);
-      }
-      state = 0;
+        http.end();   //Close connection
+        }
+        state = 2;
+      break;
+
+      case 2:  //Antes de solicitar una tarea
+        lcd.setCursor(0,0);
+        lcd.print("c:");
+        lcd.print(tarea.getColor());
+        lcd.print(",Val.req: ");
+        lcd.print(tarea.getCms());
+        if (encoder_rueda.run(0)>=tarea.getCms())
+          state=3;
+      break;
+
+      case 3:  //Cortando la linea
+        lcd.setCursor(0,0);
+        lcd.print("Corte la linea");
+        valvula.run(1);                //Prenda la valvula en D8
+        if (request_button.run(D5)){   //Si ya termino de cortar valla a enviar datos a la nube
+          state = 4;  
+          valvula.run(0);              //Apague la valvula
+        }
+      break;
+
+      case 4:  //Enviando a listas
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Enviando"); 
+        delay(200); 
+        if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status first
+          Serial.println("conecto");
+          WiFiClient client2;
+
+          HTTPClient http2;
+
+          if (http2.begin(client2, "http://192.168.1.53:8080/addesp")) { // HTTP
+            Serial.println("accedio a la pagina");
+            http2.addHeader("Content-Type", "application/json");  //Specify content-type header
+            DynamicJsonDocument doc(300);
+            doc["id"] = tarea.getId();
+            doc["medida"] = tarea.getCms();
+            doc["color"] = tarea.getColor();
+            
+            char JSONmessageBuffer[300];
+            serializeJson(doc, JSONmessageBuffer);
+            //Serial.println(JSONmessageBuffer);
+            int httpCode2 = http2.POST(JSONmessageBuffer);   //Send the request
+            String payload2 = http2.getString();                                        //Get the response payload
+        
+            Serial.println(httpCode2);   //Print HTTP return code
+            Serial.println(payload2);    //Print request response payload
+
+            http2.end(); //Close connection
+          }
+        state=0;
+        }
       break;
   
   }
-  
-  // SIempre Lea el encoder
-  
-  lcd.setCursor(0,1);
+  // Siempre Lea el encoder
+  lcd.setCursor(0,1);  //En la linea de abajo
+  lcd.print("Val. medido: ");
   lcd.print(static_cast<int>(encoder_rueda.run(0)));   
-
-  // if(trigger_valve.Listen(i1)){
-  //  valvula.run(16);       //Se activa la valvula conectada al pin 16
-
-  // if (request_button.run(D5)){
-  //   //
-  //   //
-  //   Line linea("Rojo",89);  //RGB 
-  //   while(linea.getCms() >= encoder_rueda.run(0)){
-  //     encoder_rueda.run(0);
-  //   }
-  //   valvula.run(1);
-    
-  // }
-  
-  // if (finish_button.run(D6)){
-  //   valvula.run(0);
-  //   pulses = 0;
-  //   //
-  //   //Mande datos s la nube
-  // }
-
-  
-  
 
 }
 

@@ -38,7 +38,7 @@
 
     bool dwrite(uint16_t val)
     {
-        digitalWrite(16,val);
+        digitalWrite(D8,val); //Escriba en el pin digital
         return(val);
 
     }
