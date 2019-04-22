@@ -7,7 +7,7 @@
 
 class Line:public Task<bool, uint16_t> {
 private:
-  String Color;
+  String color;
   int medida; 
   uint16_t id;   
 
@@ -15,25 +15,37 @@ public:
 
 //Funciones que puede realizar el objeto además de las de peripheal y Task
 //Funcion constructora en donde se asigna el  string tipo al Atributo tipo
-  Line(String Color,int cm, uint16_t id = random(0, 0xFFFF)) 
+  Line(uint16_t Id,int cm, String Color) 
   {
-      this->Color = Color;
+      this->id = Id;
       this->medida = cm;
+      this->color = Color;
   }
 
   //Se declara la funcion solamente
   String getColor();
-
+  void setValues(int id, int cm,String Color)
+  {
+      this->id = id;
+      this->medida = cm;
+      this->color = Color;
+      
+  }
   int getCms();
+  int getId();
 
   //Se declara la funcion report
   void report(Stream &uart);
 };
 
 
+int Line::getId(){
+  return this->id;  //Retorna el atributo type como un string
+};
+
 //Acá esta el código de la funciongetType
 String Line::getColor(){
-  return this->Color;  //Retorna el atributo type como un string
+  return this->color;  //Retorna el atributo type como un string
 };
 
 int Line::getCms(){
@@ -44,7 +56,10 @@ int Line::getCms(){
  void Line::report(Stream &uart)
  {
      StaticJsonDocument<256> doc;              //La cantidad de caracteres que va a tener el mensaje Json     
-     doc["type"] = "Line";                       //Se añade actuador y el valor a la cadena del mensaje JSON
-     doc["act_type"] = this->getColor();              //Se añade type y el valor a la cadena del mensaje JSON
+     doc["type"] = "Line";   
+     doc["id"] = this->getId();    
+     doc["medida"] = this->getCms();                //Se añade actuador y el valor a la cadena del mensaje JSON
+     doc["Color"] = this->getColor();              //Se añade type y el valor a la cadena del mensaje JSON
+     
      serializeJson(doc, uart);
  }

@@ -6,9 +6,10 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
 import time  # This is required to include time module.
+import json
 
 app = Flask(__name__) # create the application instance :  (__name__) se usa para que busque templates y static en el nombre del root path
-app.config.from_object(__name__) # load config from this file , flaskr.py
+app.config.from_object(__name__) # load config from this file , __init__.py
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
@@ -43,7 +44,7 @@ def close_db(error):
 @app.route('/')
 def show_entries():
     db = get_db()
-    cur = db.execute('select medida, color from entries order by id desc limit 2')
+    cur = db.execute('select medida, color from listas order by id desc limit 10')
     cur2 = db.execute('select medida, color from entries order by id desc limit 3')
     entries = cur.fetchall()
     list = cur2.fetchall()
@@ -51,16 +52,16 @@ def show_entries():
 
 
 
-@app.route('/add', methods=['POST'])
+@app.route('/addesp', methods=['POST'])
 def add_entry():
-   # if not session.get('logged_in'):
-    #    abort(401)
+
     db = get_db()
-    ticks = time.time()
-    content = request.get_json()
-    temp = content["valor"]
-    print(temp)
-    db.execute('insert into entries (medida , color) values (?, ?)',[temp, ticks,])
+    content = request.get_json()  #Guarde el json que recibe de esp8266
+    id = content["id"]
+    medida = content["medida"]       #Lea los JSON
+    color = content["color"]
+    print(content)
+    db.execute('insert into listas (id , medida , color) values (?, ? ,?)',[id, medida, color,])
     db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
@@ -89,10 +90,21 @@ def logout():
 
 @app.route('/helloesp')
 def helloHandler():
-    return "te amo mi bebe"
-
+    db = get_db()
+    # Se selecciona el pedido mas antiguo
+    ext = db.execute('select id, medida, color from entries order by id asc limit 1')
+    tarea = ext.fetchone()
+    id = (tarea['id'])
+    medida = (tarea['medida'])
+    color = tarea['color']
+    if ((color=="red")or(color=="rojo")):
+        color = "r"
+    data = {"id":id, "medida" : medida,"color":color}
+    json_data = json.dumps(data)
+    return  json_data
 # Run a test server.
 
 
-app.run(host = '0.0.0.0',port = 8080)
+app.run(host = '0.0.0.0',debug = True, port = 8080)
 #from extern devices use computer ip adress http://192.168.1.53:8080/
+#para que sea visible tiene que estar todos los dispositivos conectados a la misma red
