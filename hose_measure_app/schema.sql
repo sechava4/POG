@@ -9,3 +9,8 @@ create table listas (
   medida integer not null,
   color text not null
 );
+create table color_filter (
+  id integer not null,
+  medida integer not null,
+  color text not null
+);
