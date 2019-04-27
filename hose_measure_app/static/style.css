@@ -1,14 +1,15 @@
 
-body            { font-family: sans-serif; background: #eee; }
-a, h1,h2        { color: #000000 }
+body            { font-family: sans-serif; background: #eef; background-image: url("nsr500-repsol.jpg");}
+a, h1,h2        { color: #0000FF }
 h1, h2          { font-family: 'Georgia', serif; margin: 0; }
 h1              { border-bottom: 2px solid #eee; }
 h2              { font-size: 1.2em; }
 
-.page           { margin: 2em auto; width: 35em; border: 5px solid #ccc;
+
+.page           {  width: 35em; height: 1000px;border: 5px solid #ccc;
                   padding: 0.8em; background: white; }
-.entries        { list-style: none; margin: 0; padding: 0; }
-.entries li     { margin: 0.8em 1.2em; }
+.entries listas { list-style: none; margin: 0; padding: 0; }
+.entries li listas     { margin: 0.8em 1.2em; }
 .entries li h2  { margin-left: -1em; }
 .add-entry      { font-size: 0.9em; border-bottom: 1px solid #ccc; }
 .add-entry dl   { font-weight: bold; }
@@ -17,3 +18,7 @@ h2              { font-size: 1.2em; }
 .flash          { background: #cee5F5; padding: 0.5em;
                   border: 1px solid #aacbe2; }
 .error { background: #f0d6d6; padding: 0.5em; }
+
+
+
+
