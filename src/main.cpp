@@ -15,22 +15,17 @@
 #define SERVER_URL http://192.168.43.232
 
 
-
-#define ROJO 0x00FF0000 
 uint8_t state = 0;
 
 //Creacion de instancias
 //Sensores
 Sensor encoder_rueda = Sensor(String("KY040"), String("cm"));
-
 Sensor request_button = Sensor(String("Button in"), String("state"));
-
 Sensor finish_button = Sensor(String("Button out"), String("state"));
-
 Line tarea = Line(0,0,"default"); //Se crea una instancia vacia para luego sobreescribirla
 
-//Declare object of class HTTPClient
-
+WiFiClient client;
+HTTPClient http;
 //Se crea una instancia de la clase actuador para crear un objeto llamado "electrovalvula"  con atributos name y type
 Actuator valvula = Actuator(String("0.8Mpa"), String("Electrovalvula"));
 
@@ -63,7 +58,8 @@ void setup() {
 
   WiFi.mode(WIFI_STA);
   //WiFi.begin("HOME-A9BC", "2024AA4E158B3787");    //WiFi connection
-  WiFi.begin("s8(alex)", "motocross");    //WiFi connection
+  WiFi.begin("Redmi", "santiyperla");    //WiFi connection
+  //WiFi.begin("s8(alex)", "motocross");    //WiFi connection
  
   while (WiFi.status() != WL_CONNECTED) {  //Wait for the WiFI connection
  
@@ -93,7 +89,8 @@ void loop() {
       lcd.print("Solicitar Linea"); 
       //Serial.println(request_button.run(D5));
       if (request_button.run(D5)){
-        state = 1;  
+        state = 1; 
+        lcd.clear(); 
       }
 
       break;
@@ -105,11 +102,9 @@ void loop() {
       delay(200); 
       if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status first
         Serial.println("conecto");
-        WiFiClient client;
+        
 
-        HTTPClient http;
-
-        if (http.begin(client, "http://192.168.43.232:8080/helloesp")) { // HTTP
+        if (http.begin(client, "http://192.168.43.73:8080/helloesp")) { // HTTP
           Serial.println("accedio a la pagina");
           int httpCode = http.GET(); //Send the request
     
@@ -166,13 +161,10 @@ void loop() {
         zerofcn();
         if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status first
           Serial.println("conecto");
-          WiFiClient client2;
 
-          HTTPClient http2;
-
-          if (http2.begin(client2, "http://192.168.43.232:8080/addesp")) { // HTTP
+          if (http.begin(client, "http://192.168.43.73:8080/addesp")) { // HTTP
             Serial.println("accedio a la pagina");
-            http2.addHeader("Content-Type", "application/json");  //Specify content-type header
+            http.addHeader("Content-Type", "application/json");  //Specify content-type header
             DynamicJsonDocument doc(300);
             doc["id"] = tarea.getId();
             doc["medida"] = tarea.getCms();
@@ -181,13 +173,13 @@ void loop() {
             char JSONmessageBuffer[300];
             serializeJson(doc, JSONmessageBuffer);
             //Serial.println(JSONmessageBuffer);
-            int httpCode2 = http2.POST(JSONmessageBuffer);   //Send the request
-            String payload2 = http2.getString();                                        //Get the response payload
+            int httpCode2 = http.POST(JSONmessageBuffer);   //Send the request
+            String payload2 = http.getString();                                        //Get the response payload
         
             Serial.println(httpCode2);   //Print HTTP return code
             Serial.println(payload2);    //Print request response payload
 
-            http2.end(); //Close connection
+            http.end(); //Close connection
           }
         state=0;
         }
